@@ -1,0 +1,14 @@
+{
+  "extensions": [
+    {
+      "status": "4",
+      "statustext": "Unavailable",
+      "id": 112
+    },
+    {
+      "id": 113,
+      "status": "0",
+      "statustext": "Idle"
+    }
+  ]
+}
