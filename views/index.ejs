@@ -59,7 +59,7 @@
             }
             
             .table {
-                width: 90%;
+                width: 100%;
                 max-width: 100%;
                 margin-bottom: 20px;
             }
@@ -129,6 +129,8 @@
                 background-color: #dd4b39 !important;
             }
         </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
 </head>
 
 <body id="page-top">
@@ -151,213 +153,9 @@
                                         <div class="box">
                                             <!-- /.box-header -->
                                             <div class="box-body table-responsive no-padding">
-                                                <table class="table table-hover">
-                                                    <tbody style="font-size: small;">
-                                                        <tr>
-                                                            <th>Внутренний</th>
-                                                            <th>Имя</th>
-                                                            <th>BLF</th>
-                                                            <th>LDS</th>
-                                                            <th>Перевод</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>183</td>
-                                                            <td>John Doe</td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>219</td>
-                                                            <td>Alexander Pierce</td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>175</td>
-                                                            <td>Mike Doe</td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <!-- /.box-body -->
-                                        </div>
-                                    </div>
+                                                <!-- <table class="table table-hover">
 
-                                    <div class="card shadow mb-4">
-                                        <div class="box">
-                                            <!-- /.box-header -->
-                                            <div class="box-body table-responsive no-padding">
-                                                <table class="table table-hover">
-                                                    <tbody style="font-size: small;">
-                                                        <tr>
-                                                            <th>Внутренний</th>
-                                                            <th>Имя</th>
-                                                            <th>BLF</th>
-                                                            <th>LDS</th>
-                                                            <th>Перевод</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>183</td>
-                                                            <td>John Doe</td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>219</td>
-                                                            <td>Alexander Pierce</td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>175</td>
-                                                            <td>Mike Doe</td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <!-- /.box-body -->
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="col">
-
-                                    <div class="card shadow mb-4">
-                                        <div class="box">
-                                            <!-- /.box-header -->
-                                            <div class="box-body table-responsive no-padding">
-                                                <table class="table table-hover">
-                                                    <tbody style="font-size: small;">
-                                                        <tr>
-                                                            <th>Внутренний</th>
-                                                            <th>Имя</th>
-                                                            <th>BLF</th>
-                                                            <th>LDS</th>
-                                                            <th>Перевод</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>183</td>
-                                                            <td>John Doe</td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>219</td>
-                                                            <td>Alexander Pierce</td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>175</td>
-                                                            <td>Mike Doe</td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <!-- /.box-body -->
-                                        </div>
-                                    </div>
-
-                                    <div class="card shadow mb-4">
-                                        <div class="box">
-                                            <!-- /.box-header -->
-                                            <div class="box-body table-responsive no-padding">
-                                                <table class="table table-hover">
-                                                    <tbody style="font-size: small;">
-                                                        <tr>
-                                                            <th>Внутренний</th>
-                                                            <th>Имя</th>
-                                                            <th>BLF</th>
-                                                            <th>LDS</th>
-                                                            <th>Перевод</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>183</td>
-                                                            <td>John Doe</td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td><span class="label label-success">Свободен</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>219</td>
-                                                            <td>Alexander Pierce</td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td><span class="label label-warning">Разговаривает</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>175</td>
-                                                            <td>Mike Doe</td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td><span class="label label-danger">Не зарегистрирован</span></td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-success btn-circle btn-sm">
-                                                                    <i class="fas fa-check"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                </table> -->
                                             </div>
                                             <!-- /.box-body -->
                                         </div>
@@ -373,14 +171,6 @@
     </div>
     <%- include("partials/logout.ejs") %>
         <%- include("partials/script.ejs") %>
-            <script>
-                document.addEventListener("DOMContentLoaded", () => {
-                    console.log(localStorage.getItem('extension'));
-                    let extesion = document.querySelector('#userDropdown');
-                    extesion.innerHTML = `<span class="mr-2 d-none d-lg-inline text-gray-600 small">Добавочный ${localStorage.getItem('extension')}</span>
-                                        <img class="img-profile rounded-circle" src="https://source.unsplash.com/random/60x60">`;
-                });
-            </script>
 </body>
 
 </html>

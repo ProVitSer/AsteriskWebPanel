@@ -11,6 +11,7 @@ const createError = require('http-errors'),
     LocalStrategy = require(`passport-local`).Strategy,
     expressSession = require(`express-session`);
 
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -32,7 +33,6 @@ app.use(favicon(path.join(__dirname, `public`, `img`, `favicon.ico`)));
 
 
 app.use('/', indexRouter);
-
 
 const findUser = (username, done) => {
     done(null, users[username])
@@ -80,5 +80,7 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render(`login`);
 });
+
+
 
 module.exports = app;

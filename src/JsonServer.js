@@ -3,7 +3,7 @@ const axios = require('axios'),
     util = require('util');
 
 
-class SendStatus {
+class JsonServer {
     constructor(urlSendEvent = 'http://localhost:3000/extensions/112') {
         this.urlSendEvent = urlSendEvent;
     }
@@ -32,6 +32,26 @@ class SendStatus {
         return result.data;
     };
 
+    async showExtensionStatus() {
+        let config = {
+            method: 'get',
+            url: `http://localhost:3000/extensions`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        };
+
+        const res = await axios(config);
+        const result = await res;
+
+        console.log(`Получили результат на запрос ${util.inspect(result.data)}`);
+        if (!result) {
+            console.log('Отсутствует результат');
+            return [];
+        }
+        return result.data;
+    };
+
 };
 
-module.exports = SendStatus;
+module.exports = JsonServer;
