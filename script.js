@@ -1,11 +1,12 @@
 const JsonServer = require('./src/JsonServer'),
+    Ari = require('./src/ari'),
     nami = require(`./models/ami`),
-    WebSocket = require('ws');
+    WebSocket = require('ws'),
+    client = require('ari-client');
 
-
-
-const wss = new WebSocket.Server({ port: 7777 });
+const ws = new WebSocket.Server({ port: 7777 });
 const jsonServer = new JsonServer();
+const ari = new Ari();
 const clients = [];
 
 
@@ -18,46 +19,55 @@ nami.on(`namiEventExtensionStatus`, (event) => {
     }
 });
 
-const transfer = (extension, tarnsferExtension) => {
-    console.log(extension, tarnsferExtension);
+async function transfer({ extension, transferExtension }) {
+    console.log(extension, transferExtension);
+    let channelId = await ari.getExternalChannelId(transferExtension);
+    trasferCall(channelId);
 }
 
 
-const showExtStatus = (ws) => {
+const trasferCall = (channelId) => {
+    console.log(channelId);
+}
+
+
+const showExtStatus = (w) => {
     jsonServer.showExtensionStatus()
         .then(result => {
             let json = {};
             result.forEach((item) => {
-                json[item.id] = { status: item.status, statustext: item.statustext };
+                json[item.id] = { status: item.status, name: item.name, statustext: item.statustext };
             });
-            json = JSON.stringify(json);
-            ws.send(json);
+            w.send(JSON.stringify(json));
         })
 }
 
 const sendAll = (event) => {
-    let json = {};
-    for (let j = 0; j < clients.length; j++) {
-        json = JSON.stringify({ 'id': event });
-        clients[j].send(json);
-    }
+    let ids = Object.keys(clients);
+    ids.forEach((id) => {
+        clients[id].send(JSON.stringify({ 'id': event }));
+    });
 }
 
-wss.on('connection', function connection(ws) {
+ws.on('connection', function connection(w) {
+
     let id = Math.random();
-    clients[id] = ws;
-    clients.push(ws);
+    clients[id] = w;
+    console.log("новое соединение " + id);
 
-
-    ws.on('message', function(message) {
+    w.on('message', function(message) {
         if (message == 'get-infoList') {
-            showExtStatus(ws);
+            showExtStatus(w);
 
+        } else {
+            let transferExt = JSON.parse(message);
+            transfer(transferExt.transfer);
         }
 
     });
 
-    ws.on('close', function() {
+    w.on('close', function() {
+        console.log(`Close ${id}`);
         delete clients[id];
     });
 

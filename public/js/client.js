@@ -1,7 +1,5 @@
-// document.addEventListener("DOMContentLoaded", () => {
-const socket = new WebSocket("ws://localhost:7777");
-let table = document.querySelector('.table-responsive');
-let extensionsTable = document.createElement('table');
+let table = document.querySelector('.table-responsive'),
+    extensionsTable = document.createElement('table');
 extensionsTable.className = "table table-hover";
 
 
@@ -23,36 +21,43 @@ let statusText = {
     "label-danger": "Не зарегистрирован",
 };
 
-socket.onopen = function() {
-    console.log("Соединение установлено.");
-};
+const startWebsocket = () => {
+    const socket = new WebSocket("ws://localhost:7777");
 
-socket.onclose = function(event) {
-    if (event.wasClean) {
-        console.log('Соединение закрыто чисто');
-    } else {
-        console.log('Обрыв соединения');
-    }
-    console.log('Код: ' + event.code + ' причина: ' + event.reason);
-};
+    socket.onopen = function() {
+        console.log("Соединение установлено.");
+    };
 
-socket.onmessage = function(event) {
-    let extStatus = JSON.parse(event.data);
-    if (extStatus.id) {
-        modifyStatus(extStatus.id);
-    } else {
-        createTable(extStatus);
-    }
+    socket.onclose = function(event) {
+        if (event.wasClean) {
+            console.log('Соединение закрыто чисто');
+        } else {
+            setTimeout(startWebsocket, 5000)
+            console.log('Обрыв соединения');
+        }
+        console.log('Код: ' + event.code + ' причина: ' + event.reason);
+    };
 
-};
+    socket.onmessage = function(event) {
+        let extStatus = JSON.parse(event.data);
+        if (extStatus.id) {
+            modifyStatus(extStatus.id);
+        } else {
+            createTable(extStatus);
+        }
 
-socket.onerror = function(error) {
-    console.log("Ошибка " + error.message);
-};
+    };
 
-setTimeout(() => {
-    socket.send('get-infoList');
-}, 1000);
+    socket.onerror = function(error) {
+        console.log("Ошибка " + error.message);
+    };
+
+    setTimeout(() => {
+        socket.send('get-infoList');
+    }, 1000);
+}
+
+startWebsocket();
 
 let extesion = document.querySelector('#userDropdown');
 extesion.innerHTML = `<span class="mr-2 d-none d-lg-inline text-gray-600 small">Добавочный ${localStorage.getItem('extension')}</span>
@@ -64,7 +69,7 @@ const modifyStatus = ({ id, status, statustext }) => {
     extensionId.removeAttribute('class');
     extensionId.textContent = statusText[statusClass[statustext]];
     extensionId.setAttribute('class', `label ${statusClass[statustext]}`);
-}
+};
 
 const addListener = () => {
     document.querySelectorAll('#btnTransfer').forEach(item => {
@@ -72,12 +77,11 @@ const addListener = () => {
             event.preventDefault();
             console.log(event.target.name);
             console.log(localStorage.getItem('extension'));
+            socket.send(JSON.stringify({ 'transfer': { extension: event.target.name, transferExtension: localStorage.getItem('extension') } }));
         });
     });
 
-}
-
-
+};
 
 const createTable = (extStatus) => {
     extensionsTable.innerHTML =
@@ -90,12 +94,13 @@ const createTable = (extStatus) => {
         </tr>`
 
     for (key in extStatus) {
+        // console.log(extStatus[key]);
         extensionsTable.innerHTML +=
             `<tr id=${key}>
                 <td>${key}</td>
-                <td>Иван Иванович</td>
+                <td>${extStatus[key].name}</td>
                 <td><span id="status-blf-${key}" class="label ${statusClass[extStatus[key].statustext]}">${statusText[statusClass[extStatus[key].statustext]]}</span></td>
-                <td><span id="status-lds-${key}" class="label ${statusClass[extStatus[key].statustext]}">${statusText[statusClass[extStatus[key].statustext]]}</span></td>
+                <td><span id="status-lds-${key}" class="label label-danger">Не зарегистрирован</span></td>
                 <td>
                     <button id="btnTransfer" type="button" name=${key} class="btn btn-success btn-circle btn-sm">V
                     </button>
@@ -105,6 +110,4 @@ const createTable = (extStatus) => {
     };
     addListener();
 
-}
-
-// });
+};

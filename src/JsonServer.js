@@ -1,55 +1,29 @@
 'use strict';
-const axios = require('axios'),
-    util = require('util');
+const util = require('util'),
+    appConfig = require('../config/config'),
+    Axios = require('./axios');
 
 
-class JsonServer {
-    constructor(urlSendEvent = 'http://localhost:3000/extensions/112') {
-        this.urlSendEvent = urlSendEvent;
+class JsonServer extends Axios {
+    constructor(jsonServerHost = appConfig.jsonServer.host, jsonServerPort = appConfig.jsonServer.port) {
+        super();
+        this.jsonServerHost = jsonServerHost;
+        this.jsonServerPort = jsonServerPort;
     }
 
     async setStatus({ exten, status, statustext }) {
         console.log(`Внутренний номер ${exten} цифровой статус ${status} текстовый статус ${statustext}`);
-        let data = JSON.stringify({ "status": status, "statustext": statustext });
-
-        let config = {
-            method: 'put',
-            url: `http://localhost:3000/extensions/${exten}`,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: data
-        };
-
-        const res = await axios(config);
-        const result = await res;
-
-        console.log(`Получили результат на запрос ${util.inspect(result.data)}`);
-        if (!result) {
-            console.log('Отсутствует результат');
-            return [];
-        }
-        return result.data;
+        let result = await this.axiosReq('patch',
+            `http://${this.jsonServerHost}:${this.jsonServerPort}/extensions/${exten}`,
+            JSON.stringify({ "status": status, "statustext": statustext }));
+        console.log(result);
     };
 
     async showExtensionStatus() {
-        let config = {
-            method: 'get',
-            url: `http://localhost:3000/extensions`,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        };
+        let result = await this.axiosReq('get',
+            `http://${this.jsonServerHost}:${this.jsonServerPort}/extensions`);
 
-        const res = await axios(config);
-        const result = await res;
-
-        console.log(`Получили результат на запрос ${util.inspect(result.data)}`);
-        if (!result) {
-            console.log('Отсутствует результат');
-            return [];
-        }
-        return result.data;
+        return (result.data);
     };
 
 };

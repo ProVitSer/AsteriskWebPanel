@@ -1,11 +1,12 @@
 "use strict";
-const namiLib = require(`nami`);
+const namiLib = require(`nami`),
+    appConfig = require(`../config/config`);
 
 const namiConfig = {
-    host: '185.69.154.243',
-    port: 5038,
-    username: 'vitalik',
-    secret: 'dda991d6e0c001e0faf19cf2ad411dc8'
+    host: appConfig.ami.host,
+    port: appConfig.ami.port,
+    username: appConfig.ami.username,
+    secret: appConfig.ami.secret
 };
 let nami = new namiLib.Nami(namiConfig);
 
