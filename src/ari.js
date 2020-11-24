@@ -13,7 +13,7 @@ class Ari extends Axios {
     }
 
     async getExternalChannelId(extension) {
-
+        console.log(`http://${this.host}:${this.port}/ari/endpoints/PJSIP/${extension}?api_key=${this.username}:${this.password}`)
         let channelAId = await this.axiosReq('get', `http://${this.host}:${this.port}/ari/endpoints/PJSIP/${extension}?api_key=${this.username}:${this.password}`);
         console.log(`Получили результат на запрос Channel ID А плеча ${util.inspect(channelAId.data.channel_ids)}`);
         let bridgesId = await this.axiosReq('get', `http://${this.host}:${this.port}/ari/bridges?api_key=${this.username}:${this.password}`);

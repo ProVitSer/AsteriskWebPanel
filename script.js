@@ -13,8 +13,7 @@ const clients = [];
 nami.on(`namiEventExtensionStatus`, (event) => {
     if (event.exten.length == 3) {
         console.log(event);
-        jsonServer.setStatus(event);
-        console.log(event);
+        modufiExtStatus(event);
         sendAll({ id: event.exten, status: event.status, statustext: event.statustext });
     }
 });
@@ -30,15 +29,25 @@ const trasferCall = (channelId) => {
     console.log(channelId);
 }
 
+const modufiExtStatus = ({ exten, status, statustext }) => {
+    jsonServer.showExtensionStatus()
+        .then(result => {
+            for (let key in result) {
+                for (let n = 0; n < result[key].length; n++) {
+                    if (result[key][n].id == exten) {
+                        console.log(key)
+                        jsonServer.setStatus(exten, status, statustext, key);
+                    }
+                }
+            }
+
+        })
+}
 
 const showExtStatus = (w) => {
     jsonServer.showExtensionStatus()
         .then(result => {
-            let json = {};
-            result.forEach((item) => {
-                json[item.id] = { status: item.status, name: item.name, statustext: item.statustext };
-            });
-            w.send(JSON.stringify(json));
+            w.send(JSON.stringify(result));
         })
 }
 

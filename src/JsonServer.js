@@ -11,17 +11,17 @@ class JsonServer extends Axios {
         this.jsonServerPort = jsonServerPort;
     }
 
-    async setStatus({ exten, status, statustext }) {
-        console.log(`Внутренний номер ${exten} цифровой статус ${status} текстовый статус ${statustext}`);
+    async setStatus(exten, status, statustext, key) {
+        console.log(`Внутренний номер ${exten} цифровой статус ${status} текстовый статус ${statustext} офис ${key}`);
         let result = await this.axiosReq('patch',
-            `http://${this.jsonServerHost}:${this.jsonServerPort}/extensions/${exten}`,
+            `http://${this.jsonServerHost}:${this.jsonServerPort}/${key}/${exten}`,
             JSON.stringify({ "status": status, "statustext": statustext }));
         console.log(result);
     };
 
     async showExtensionStatus() {
         let result = await this.axiosReq('get',
-            `http://${this.jsonServerHost}:${this.jsonServerPort}/extensions`);
+            `http://${this.jsonServerHost}:${this.jsonServerPort}/db`);
 
         return (result.data);
     };
