@@ -20,6 +20,11 @@ let statusText = {
     "label-danger": "Не зарегистрирован",
 };
 
+let statusLds = {
+    "label-success": "Зарегистрирован",
+    "label-danger": "Не зарегистрирован",
+};
+
 let officeName = {
     "Petrov": "",
     "Arhipov": "",
@@ -37,40 +42,50 @@ let officeName = {
     "Couch": "Коуч",
 };
 
-const socket = new WebSocket("ws://localhost:7777");
+let socket;
 
-socket.onopen = function() {
-    console.log("Соединение установлено.");
-};
-
-socket.onclose = function(event) {
-    if (event.wasClean) {
-        console.log('Соединение закрыто чисто');
-    } else {
-        setTimeout(startWebsocket, 5000)
-        console.log('Обрыв соединения');
-    }
-    console.log('Код: ' + event.code + ' причина: ' + event.reason);
-};
-
-socket.onmessage = function(event) {
+const socketMessageListener = (event) => {
     let extStatus = JSON.parse(event.data);
     if (extStatus.id) {
         modifyStatus(extStatus.id);
+    } else if (extStatus.lds) {
+        modifyLDSStatus(extStatus.lds)
     } else {
         console.log(extStatus);
         createTable(extStatus);
     }
-
 };
 
-socket.onerror = function(error) {
+const socketOpenListener = (event) => {
+    console.log("Соединение установлено.");
+    getInfo();
+};
+
+const socketErrorListener = (event) => {
     console.log("Ошибка " + error.message);
 };
 
-setTimeout(() => {
-    socket.send('get-infoList');
-}, 1000);
+const socketCloseListener = (event) => {
+    if (socket) {
+        console.error('Disconnected.');
+    }
+    socket = new WebSocket("ws://localhost:7777");
+    socket.addEventListener('open', socketOpenListener);
+    socket.addEventListener('message', socketMessageListener);
+    socket.addEventListener('error', socketErrorListener);
+    socket.addEventListener('close', socketCloseListener);
+};
+
+socketCloseListener();
+
+
+const getInfo = () => {
+    setTimeout(() => {
+        socket.send('get-infoList');
+    }, 1000);
+}
+
+
 
 
 
@@ -79,6 +94,20 @@ extesion.innerHTML = `<span class="mr-2 d-none d-lg-inline text-gray-600 small">
                         <img class="img-profile rounded-circle" src="https://source.unsplash.com/random/60x60">`;
 
 
+
+const modifyLDSStatus = ({ id, status }) => {
+    console.log(id, status);
+    if (status) {
+        status = 'Idle'
+    } else {
+        status = 'Unavailable'
+    }
+    let extensionId = document.getElementById(`status-lds-${id}`);
+    extensionId.removeAttribute('class');
+    extensionId.textContent = statusLds[statusClass[status]];
+    extensionId.setAttribute('class', `label ${statusClass[status]}`);
+};
+
 const modifyStatus = ({ id, status, statustext }) => {
     let extensionId = document.getElementById(`status-blf-${id}`);
     extensionId.removeAttribute('class');
@@ -86,17 +115,37 @@ const modifyStatus = ({ id, status, statustext }) => {
     extensionId.setAttribute('class', `label ${statusClass[statustext]}`);
 };
 
-const addListener = () => {
+const addTransferButtonListener = () => {
     document.querySelectorAll('#btnTransfer').forEach(item => {
         item.addEventListener('click', function(event) {
             event.preventDefault();
-            console.log(event.target.name);
-            console.log(localStorage.getItem('extension'));
             socket.send(JSON.stringify({ 'transfer': { extension: event.target.name, transferExtension: localStorage.getItem('extension') } }));
         });
     });
 
 };
+
+const addDNDButtonListener = () => {
+    document.querySelectorAll('#btnDND').forEach(item => {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+            socket.send(JSON.stringify({ 'dnd': { extension: event.target.name } }));
+        });
+    });
+
+};
+
+const addCustomDNDButtonListener = () => {
+    document.querySelectorAll('#btnCustomDND').forEach(item => {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+            socket.send(JSON.stringify({ 'customdnd': { extension: localStorage.getItem('extension') } }));
+        });
+    });
+
+};
+addCustomDNDButtonListener();
+
 
 const createTable = (result) => {
     console.log(result)
@@ -119,13 +168,23 @@ const createTable = (result) => {
                                     <th>Перевод</th>
                                 </tr>`
         for (let n = 0; n < result[key].length; n++) {
+
+            if (result[key][n].ldsStatus) {
+                result[key][n].ldsStatus = 'Idle'
+            } else {
+                result[key][n].ldsStatus = 'Unavailable'
+            }
+
+
             html += `<tr style="background-color: ${result[key][n].backgroundColor};" id=${result[key][n].id}>
                                      <td>${result[key][n].id}</td>
                                      <td>${result[key][n].name}</td>
                                      <td><span style="line-height:20px;" id="status-blf-${result[key][n].id}" class="label ${statusClass[result[key][n].statustext]}">${statusText[statusClass[result[key][n].statustext]]}</span></td>
-                                     <td><span style="line-height:20px;" id="status-lds-${result[key][n].id}" class="label label-danger">Не зарегистрирован</span></td>
+                                     <td><span style="line-height:20px;" id="status-lds-${result[key][n].id}" class="label ${statusClass[result[key][n].ldsStatus]}">${statusLds[statusClass[result[key][n].ldsStatus]]}</span></td>
                                      <td>
-                                         <button id="btnTransfer" type="button" name=${result[key][n].id} class="btn btn-success btn-circle btn-sm">V
+                                         <button id="btnTransfer" type="button" name=${result[key][n].id} class="btn btn-success btn-circle btn-sm">T
+                                         <br>
+                                         <button id="btnDND" type="button" name=${result[key][n].id} class="btn btn-success btn-circle btn-sm">D
                                          </button>
                                      </td>
                                  </tr>`
@@ -140,6 +199,11 @@ const createTable = (result) => {
 
     }
     row.innerHTML = html;
-    addListener();
+    console.log(localStorage.getItem('user'));
+    if (localStorage.getItem('user') == 'admin') {
+        addTransferButtonListener();
+        addDNDButtonListener();
+
+    };
 
 };
