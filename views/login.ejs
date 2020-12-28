@@ -24,7 +24,13 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             document.addEventListener('submit', (e) => {
-                localStorage.setItem('extension', document.getElementById("username").value);
+                let username = document.getElementById("username").value;
+                localStorage.setItem('extension', username);
+                if (username == '299' || username == '112') {
+                    localStorage.setItem('user', 'admin');
+                } else {
+                    localStorage.setItem('user', 'manager');
+                }
             })
         });
     </script>

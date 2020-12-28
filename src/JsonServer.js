@@ -19,6 +19,14 @@ class JsonServer extends Axios {
         console.log(result);
     };
 
+    async setLds(exten, key, status) {
+        console.log(`Статус LDS у абонента ${exten}  ${status}  офис ${key}`);
+        let result = await this.axiosReq('patch',
+            `http://${this.jsonServerHost}:${this.jsonServerPort}/${key}/${exten}`,
+            JSON.stringify({ "ldsStatus": status }));
+        //console.log(result);
+    };
+
     async showExtensionStatus() {
         let result = await this.axiosReq('get',
             `http://${this.jsonServerHost}:${this.jsonServerPort}/db`);
