@@ -113,26 +113,37 @@ const modifyStatus = ({ id, status, statustext }) => {
     extensionId.removeAttribute('class');
     extensionId.textContent = statusText[statusClass[statustext]];
     extensionId.setAttribute('class', `label ${statusClass[statustext]}`);
+
+    if (statustext == 'Busy') {
+        let extensionDND = document.getElementById(`btnDND-${id}`);
+        extensionDND.removeAttribute('class');
+        extensionDND.setAttribute('class', `btn btn-warning btn-circle btn-sm`);
+    }
+
+    if (statustext == 'Idle') {
+        let extensionDND = document.getElementById(`btnDND-${id}`);
+        extensionDND.removeAttribute('class');
+        extensionDND.setAttribute('class', `btn btn-success btn-circle btn-sm`);
+    }
+
 };
 
-const addTransferButtonListener = () => {
-    document.querySelectorAll('#btnTransfer').forEach(item => {
-        item.addEventListener('click', function(event) {
-            event.preventDefault();
-            socket.send(JSON.stringify({ 'transfer': { extension: event.target.name, transferExtension: localStorage.getItem('extension') } }));
+
+const addDNDTransferButtonListener = () => {
+    document.querySelectorAll('button.btn-sm').forEach(item => {
+        document.querySelectorAll(`#btnDND-${item.name}`).forEach(item => {
+            item.addEventListener('click', function(event) {
+                event.preventDefault();
+                socket.send(JSON.stringify({ 'dnd': { extension: event.target.name } }));
+            });
+        });
+        document.querySelectorAll(`#btnTransfer-${item.name}`).forEach(item => {
+            item.addEventListener('click', function(event) {
+                event.preventDefault();
+                socket.send(JSON.stringify({ 'transfer': { extension: event.target.name, transferExtension: localStorage.getItem('extension') } }));
+            });
         });
     });
-
-};
-
-const addDNDButtonListener = () => {
-    document.querySelectorAll('#btnDND').forEach(item => {
-        item.addEventListener('click', function(event) {
-            event.preventDefault();
-            socket.send(JSON.stringify({ 'dnd': { extension: event.target.name } }));
-        });
-    });
-
 };
 
 const addCustomDNDButtonListener = () => {
@@ -182,9 +193,9 @@ const createTable = (result) => {
                                      <td><span style="line-height:20px;" id="status-blf-${result[key][n].id}" class="label ${statusClass[result[key][n].statustext]}">${statusText[statusClass[result[key][n].statustext]]}</span></td>
                                      <td><span style="line-height:20px;" id="status-lds-${result[key][n].id}" class="label ${statusClass[result[key][n].ldsStatus]}">${statusLds[statusClass[result[key][n].ldsStatus]]}</span></td>
                                      <td>
-                                         <button id="btnTransfer" type="button" name=${result[key][n].id} class="btn btn-success btn-circle btn-sm">T
+                                         <button id="btnTransfer-${result[key][n].id}" type="button" name=${result[key][n].id} class="btn btn-success btn-circle btn-sm">T
                                          <br>
-                                         <button id="btnDND" type="button" name=${result[key][n].id} class="btn btn-success btn-circle btn-sm">D
+                                         <button id="btnDND-${result[key][n].id}" type="button" name=${result[key][n].id} class="btn btn-success btn-circle btn-sm">D
                                          </button>
                                      </td>
                                  </tr>`
@@ -201,8 +212,7 @@ const createTable = (result) => {
     row.innerHTML = html;
     console.log(localStorage.getItem('user'));
     if (localStorage.getItem('user') == 'admin') {
-        addTransferButtonListener();
-        addDNDButtonListener();
+        addDNDTransferButtonListener();
 
     };
 
